@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html class="light" lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Stock Platform</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-tint": "#c41e1e",
+              "error-dim": "#4e0309",
+              "surface-container": "#f4f1ee",
+              "tertiary-fixed": "#ff5c4d",
+              "inverse-on-surface": "#8c8c8c",
+              "secondary-dim": "#3a5764",
+              "outline-variant": "#d1cfcd",
+              "on-secondary-container": "#395663",
+              "on-surface-variant": "#5a5856",
+              "inverse-primary": "#ffdad4",
+              "on-primary-fixed": "#410002",
+              "surface-variant": "#e8e4e1",
+              "on-tertiary-fixed": "#000000",
+              "on-secondary-fixed": "#264350",
+              "on-error-container": "#752121",
+              "on-tertiary": "#fff7f6",
+              "surface-container-highest": "#e8e4e1",
+              "secondary-fixed-dim": "#bbd9e9",
+              "on-error": "#fff7f6",
+              "on-tertiary-fixed-variant": "#3b0002",
+              "surface-bright": "#fcfaf8",
+              secondary: "#466370",
+              "primary-fixed-dim": "#ffb4ab",
+              "inverse-surface": "#1a1c1d",
+              "on-surface": "#1e1b1a",
+              "on-primary": "#ffffff",
+              background: "#fdf2f2",
+              "primary-container": "#fff1f0",
+              "surface-container-high": "#f0edea",
+              "on-primary-fixed-variant": "#93000a",
+              "on-secondary": "#f3faff",
+              primary: "#c41e1e",
+              "surface-dim": "#e5e1de",
+              tertiary: "#d42e2e",
+              "on-background": "#1e1b1a",
+              "secondary-container": "#c9e7f7",
+              error: "#b3261e",
+              "secondary-fixed": "#c9e7f7",
+              "primary-fixed": "#ffdad4",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-low": "#f7f4f1",
+              "primary-dim": "#a51616",
+              "on-secondary-fixed-variant": "#435f6d",
+              "tertiary-fixed-dim": "#ec413e",
+              "tertiary-dim": "#a90816",
+              surface: "#fcfaf8",
+              "on-primary-container": "#410002",
+              "tertiary-container": "#ff5c4d",
+              "on-tertiary-container": "#1f0001",
+              outline: "#85817e",
+              "error-container": "#fe8983",
+              "stock-up": "#ff3b3b",
+              "stock-down": "#34d399",
+            },
+            fontFamily: {
+              headline: ["Inter", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+              label: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.125rem",
+              lg: "0.25rem",
+              xl: "0.5rem",
+              full: "0.75rem",
+            },
+            backgroundImage: {
+              "china-red-gradient":
+                "linear-gradient(135deg, #e63946 0%, #d62828 40%, #bc1b1b 100%)",
+              "festive-red-bg":
+                "linear-gradient(160deg, #fff5f5 0%, #ffebeb 45%, #ffd6d6 100%)",
+              "brand-glow":
+                "radial-gradient(circle at 20% 20%, rgba(196, 30, 30, 0.03) 0%, transparent 50%)",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #fff5f5;
+        background-image: linear-gradient(160deg, #fff5f5 0%, #ffebeb 45%, #ffd6d6 100%);
+        background-attachment: fixed;
+      }
+
+      .tabular-nums {
+        font-variant-numeric: tabular-nums;
+      }
+
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+        vertical-align: middle;
+      }
+
+      .table-scrollbar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+
+      .table-scrollbar::-webkit-scrollbar-track {
+        background: #f7f4f1;
+      }
+
+      .table-scrollbar::-webkit-scrollbar-thumb {
+        background: #e5e1de;
+        border-radius: 3px;
+      }
+
+      .sidebar-item-active {
+        background: #ffffff;
+        color: #c41e1e;
+        box-shadow: 0 2px 8px rgba(196, 30, 30, 0.08);
+      }
+
+      .ghost-primary-btn {
+        background: #ffffff;
+        border: 2px solid #c41e1e;
+        color: #c41e1e;
+        transition: all 0.2s ease;
+      }
+
+      .ghost-primary-btn:hover {
+        background: #fff1f0;
+        box-shadow: 0 4px 12px rgba(196, 30, 30, 0.1);
+      }
+
+      .card-shadow {
+        box-shadow: 0 8px 30px rgba(196, 30, 30, 0.06);
+      }
+
+      @media (max-width: 1024px) {
+        body {
+          overflow: auto;
+          height: auto;
+        }
+
+        aside {
+          width: 100% !important;
+          height: auto !important;
+          border-right: none !important;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .page-shell {
+          flex-direction: column;
+          min-height: 100vh;
+        }
+      }
+    </style>
+  </head>
+  <body class="flex h-screen overflow-hidden text-on-surface">
+    <div class="page-shell flex h-full w-full">
+      <aside
+        class="relative flex h-full w-64 shrink-0 flex-col overflow-hidden border-r border-black/[0.03] bg-surface-container-low py-4"
+      >
+        <div class="pointer-events-none absolute left-0 top-0 h-full w-full bg-brand-glow opacity-10"></div>
+
+        <div class="relative z-10 mb-8 px-6">
+          <div class="flex items-center gap-3">
+            <div
+              class="flex h-9 w-9 items-center justify-center rounded-lg bg-china-red-gradient text-white shadow-lg"
+            >
+              <span class="material-symbols-outlined text-base">account_balance</span>
+            </div>
+            <div>
+              <div class="text-sm font-extrabold tracking-tight text-[#c41e1e]">交易终端</div>
+              <div class="text-[10px] font-bold text-on-surface-variant/70">PREMIUM EDITION</div>
+            </div>
+          </div>
+        </div>
+
+        <nav class="relative z-10 flex-1 space-y-1.5">
+          <a
+            class="sidebar-item-active mx-3 flex items-center rounded-lg px-4 py-2.5 font-bold transition-all"
+            href="#"
+          >
+            <span
+              class="material-symbols-outlined mr-3 text-xl"
+              style="font-variation-settings: 'FILL' 1"
+              >list_alt</span
+            >
+            <span class="text-[11px] tracking-wide">个人自选</span>
+          </a>
+          <a
+            class="mx-3 flex items-center rounded-lg px-4 py-2.5 text-on-surface-variant transition-all duration-200 hover:bg-white/60 hover:text-[#c41e1e]"
+            href="#"
+          >
+            <span class="material-symbols-outlined mr-3 text-xl">show_chart</span>
+            <span class="text-[11px] font-bold tracking-wide">指数大盘</span>
+          </a>
+        </nav>
+      </aside>
+
+      <div class="relative flex min-w-0 flex-1 flex-col overflow-hidden">
+        <header
+          class="flex h-16 w-full shrink-0 items-center justify-between border-b border-black/[0.03] bg-white/90 px-8 backdrop-blur-md"
+        >
+          <div class="flex items-center gap-8">
+              <div class="text-2xl font-black tracking-tighter text-[#c41e1e]">Equity Foundry</div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-6">
+              <div class="flex items-center gap-2">
+                <div class="flex h-7 w-7 items-center justify-center rounded-full bg-surface-container">
+                  <span class="material-symbols-outlined text-lg text-outline">person</span>
+                </div>
+                <span class="text-sm font-bold text-on-surface">交易员 001</span>
+              </div>
+              <div class="h-4 w-px bg-outline-variant/30"></div>
+              <button
+                class="flex items-center gap-1.5 text-on-surface-variant transition-colors hover:text-primary"
+                type="button"
+              >
+                <span class="text-xs font-bold">安全退出</span>
+                <span class="material-symbols-outlined text-lg">logout</span>
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <main class="flex-1 space-y-6 overflow-y-auto p-8">
+          <div
+            class="flex items-center justify-between rounded-xl border border-outline-variant/10 bg-white p-5 card-shadow"
+          >
+            <div class="flex items-center gap-3">
+              <div class="h-6 w-1.5 rounded-full bg-primary"></div>
+              <h1 class="text-xl font-black tracking-tight text-on-surface">A股行情筛选工作台</h1>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="rounded-full border border-primary/5 bg-primary-container px-4 py-1.5">
+                <span class="text-xs font-extrabold text-primary"
+                  >行情时间: 2026-03-26 15:00:00 (已收盘)</span
+                >
+              </div>
+              <button
+                class="material-symbols-outlined rounded-full bg-surface p-2 text-primary transition-colors hover:bg-primary/5"
+                type="button"
+              >
+                refresh
+              </button>
+            </div>
+          </div>
+
+          <section class="rounded-xl border border-outline-variant/10 bg-white p-8 card-shadow">
+            <div class="mb-8 flex items-center justify-between">
+              <h2 class="flex items-center gap-3 text-lg font-black text-on-surface">
+                <span class="material-symbols-outlined text-2xl text-primary">filter_alt</span>
+                多维智能选股
+              </h2>
+              <button class="text-xs font-bold text-outline transition-colors hover:text-primary" type="button">
+                重置所有条件
+              </button>
+            </div>
+
+            <div class="flex flex-col gap-8">
+              <div class="space-y-5">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xs font-black uppercase tracking-[0.15em] text-on-surface/50">
+                    第一类：基本信息
+                  </h3>
+                  <button class="text-[10px] font-black text-primary hover:opacity-70" type="button">
+                    收起选项
+                  </button>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-4">
+                  <div class="space-y-1.5">
+                    <label class="block text-[10px] font-black uppercase tracking-wider text-outline"
+                      >名称 / 简拼</label
+                    >
+                    <input
+                      class="w-full rounded-lg border border-outline-variant/10 bg-surface-container-low px-4 py-2.5 text-xs text-on-surface outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      placeholder="输入股票名称或代码"
+                      type="text"
+                    />
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <label class="block text-[10px] font-black uppercase tracking-wider text-outline"
+                      >市场代码</label
+                    >
+                    <input
+                      class="w-full rounded-lg border border-outline-variant/10 bg-surface-container-low px-4 py-2.5 text-xs text-on-surface outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      placeholder="如 600000.SH"
+                      type="text"
+                    />
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <label class="block text-[10px] font-black uppercase tracking-wider text-outline"
+                      >交易市场</label
+                    >
+                    <select
+                      class="w-full cursor-pointer appearance-none rounded-lg border border-outline-variant/10 bg-surface-container-low px-3 py-2.5 text-xs text-on-surface outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    >
+                      <option>全部市场</option>
+                      <option>上证主板</option>
+                      <option>深证主板</option>
+                      <option>创业板</option>
+                      <option>科创板</option>
+                    </select>
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <label class="block text-[10px] font-black uppercase tracking-wider text-outline"
+                      >成分股类别</label
+                    >
+                    <select
+                      class="w-full cursor-pointer appearance-none rounded-lg border border-outline-variant/10 bg-surface-container-low px-3 py-2.5 text-xs text-on-surface outline-none transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
+                    >
+                      <option>全部</option>
+                      <option>沪深300</option>
+                      <option>中证500</option>
+                      <option>上证50</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-5 border-t border-outline-variant/10 pt-6">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xs font-black uppercase tracking-[0.15em] text-on-surface/50">
+                    第二类：行业 / 热点题材
+                  </h3>
+                  <button class="text-[10px] font-black text-primary" type="button">展开详情</button>
+                </div>
+              </div>
+
+              <div class="space-y-5 border-t border-outline-variant/10 pt-6">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-xs font-black uppercase tracking-[0.15em] text-on-surface/50">
+                    第三类：精准筛选
+                  </h3>
+                  <button class="text-[10px] font-black text-primary" type="button">展开详情</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-10 flex justify-start gap-4">
+              <button
+                class="ghost-primary-btn flex items-center gap-2 rounded-lg px-10 py-3 text-sm font-black uppercase tracking-widest transition-all"
+                type="button"
+              >
+                <span class="material-symbols-outlined text-lg">bolt</span>
+                执行筛选
+              </button>
+            </div>
+          </section>
+
+          <section class="flex flex-col overflow-hidden rounded-xl border border-outline-variant/10 bg-white card-shadow">
+            <div
+              class="flex flex-col justify-between gap-2 border-b border-outline-variant/5 bg-white px-8 py-5 md:flex-row md:items-center"
+            >
+              <h2 class="text-base font-black text-on-surface">行情数据动态明细</h2>
+              <div class="flex items-center gap-3 text-[10px] font-bold text-outline">
+                <span class="flex items-center gap-1"
+                  ><span class="h-2 w-2 rounded-full bg-stock-up"></span>上涨趋势</span
+                >
+                <span class="flex items-center gap-1"
+                  ><span class="h-2 w-2 rounded-full bg-stock-down"></span>下跌趋势</span
+                >
+                <span class="ml-4 opacity-70">共 5,023 只标的 | 每页 50 条</span>
+              </div>
+            </div>
+
+            <div class="table-scrollbar relative max-h-[600px] overflow-auto">
+              <table class="min-w-[1800px] w-full border-collapse text-left text-[11px]">
+                <thead
+                  class="sticky top-0 z-10 bg-surface-container-low text-[10px] font-black uppercase tracking-widest text-on-surface/60"
+                >
+                  <tr class="divide-x divide-outline-variant/5">
+                    <th class="bg-surface-container-low/95 px-6 py-4 backdrop-blur-sm">代码</th>
+                    <th class="bg-surface-container-low/95 px-6 py-4 backdrop-blur-sm">名称</th>
+                    <th class="bg-surface-container-low/95 px-4 py-4 backdrop-blur-sm">板块</th>
+                    <th class="bg-surface-container-low/95 px-4 py-4 backdrop-blur-sm">行业分类</th>
+                    <th class="bg-surface-container-low/95 px-4 py-4 backdrop-blur-sm">所属概念</th>
+                    <th class="bg-surface-container-low/95 px-6 py-4 text-right backdrop-blur-sm">
+                      总市值 (亿)
+                    </th>
+                    <th class="bg-surface-container-low/95 px-4 py-4 backdrop-blur-sm">日期</th>
+                    <th class="bg-surface-container-low/95 px-4 py-4 backdrop-blur-sm">成分</th>
+                    <th class="bg-surface-container-low/95 px-6 py-4 text-right backdrop-blur-sm">今开</th>
+                    <th class="bg-surface-container-low/95 px-6 py-4 text-right backdrop-blur-sm">收盘</th>
+                    <th class="bg-surface-container-low/95 px-6 py-4 text-right backdrop-blur-sm">涨跌幅</th>
+                    <th class="bg-surface-container-low/95 px-6 py-4 text-right backdrop-blur-sm">
+                      成交量
+                    </th>
+                    <th class="bg-surface-container-low/95 px-4 py-4 text-right backdrop-blur-sm">MA5</th>
+                    <th class="bg-surface-container-low/95 px-4 py-4 text-right backdrop-blur-sm">MA20</th>
+                    <th class="bg-surface-container-low/95 px-4 py-4 text-right backdrop-blur-sm">MACD</th>
+                    <th class="bg-surface-container-low/95 px-4 py-4 text-right backdrop-blur-sm">K</th>
+                    <th class="bg-surface-container-low/95 px-4 py-4 text-right backdrop-blur-sm">D</th>
+                    <th class="bg-surface-container-low/95 px-4 py-4 text-right backdrop-blur-sm">J</th>
+                  </tr>
+                </thead>
+                <tbody
+                  id="stockTableBody"
+                  class="tabular-nums divide-y divide-outline-variant/5 bg-white font-medium text-on-surface"
+                >
+                  <tr class="group cursor-pointer divide-x divide-outline-variant/5 transition-colors hover:bg-primary/5">
+                    <td class="px-6 py-4 font-black text-primary">000001.SZ</td>
+                    <td class="px-6 py-4 text-sm font-black">平安银行</td>
+                    <td class="px-4 py-4">深证主板</td>
+                    <td class="px-4 py-4 opacity-70">银行 / 股份制</td>
+                    <td class="max-w-[150px] truncate px-4 py-4 opacity-70">区块链 / 互联金融</td>
+                    <td class="px-6 py-4 text-right font-black">2123.01</td>
+                    <td class="px-4 py-4">03-26</td>
+                    <td class="px-4 py-4">是</td>
+                    <td class="px-6 py-4 text-right">10.51</td>
+                    <td class="px-6 py-4 text-right font-black">10.54</td>
+                    <td class="px-6 py-4 text-right font-black text-stock-up">+0.28%</td>
+                    <td class="px-6 py-4 text-right">837,664</td>
+                    <td class="px-4 py-4 text-right">10.30</td>
+                    <td class="px-4 py-4 text-right">10.35</td>
+                    <td class="px-4 py-4 text-right text-stock-up">0.0146</td>
+                    <td class="px-4 py-4 text-right font-black text-stock-up">64.25</td>
+                    <td class="px-4 py-4 text-right">55.88</td>
+                    <td class="px-4 py-4 text-right text-stock-up">81.00</td>
+                  </tr>
+                  <tr class="group cursor-pointer divide-x divide-outline-variant/5 transition-colors hover:bg-primary/5">
+                    <td class="px-6 py-4 font-black text-primary">000002.SZ</td>
+                    <td class="px-6 py-4 text-sm font-black">万科A</td>
+                    <td class="px-4 py-4">深证主板</td>
+                    <td class="px-4 py-4 opacity-70">房地产 / 开发</td>
+                    <td class="max-w-[150px] truncate px-4 py-4 opacity-70">REITs / 租赁同权</td>
+                    <td class="px-6 py-4 text-right font-black">403.00</td>
+                    <td class="px-4 py-4">03-26</td>
+                    <td class="px-4 py-4">是</td>
+                    <td class="px-6 py-4 text-right">4.10</td>
+                    <td class="px-6 py-4 text-right font-black">4.04</td>
+                    <td class="px-6 py-4 text-right font-black text-stock-down">-1.54%</td>
+                    <td class="px-6 py-4 text-right">648,259</td>
+                    <td class="px-4 py-4 text-right">4.12</td>
+                    <td class="px-4 py-4 text-right">4.53</td>
+                    <td class="px-4 py-4 text-right text-stock-down">-0.0625</td>
+                    <td class="px-4 py-4 text-right font-black text-stock-down">9.35</td>
+                    <td class="px-4 py-4 text-right">13.29</td>
+                    <td class="px-4 py-4 text-right text-stock-down">1.46</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div
+              class="flex items-center justify-between border-t border-outline-variant/5 bg-surface-container-low px-8 py-4"
+            >
+              <div class="flex items-center gap-1.5">
+                <button
+                  class="rounded-lg border border-outline-variant/10 bg-white px-4 py-1.5 text-[10px] font-black uppercase transition-all hover:bg-primary hover:text-white"
+                  type="button"
+                >
+                  首页
+                </button>
+                <button
+                  class="rounded-lg border border-outline-variant/10 bg-white px-4 py-1.5 text-[10px] font-black uppercase transition-all hover:bg-primary hover:text-white"
+                  type="button"
+                >
+                  上一页
+                </button>
+                <div class="mx-3 flex items-center gap-1">
+                  <button
+                    class="flex h-8 w-8 items-center justify-center rounded-lg border-2 border-primary bg-white text-[11px] font-black text-primary"
+                    type="button"
+                  >
+                    1
+                  </button>
+                  <button
+                    class="flex h-8 w-8 items-center justify-center rounded-lg text-[11px] font-black text-on-surface-variant transition-colors hover:bg-white"
+                    type="button"
+                  >
+                    2
+                  </button>
+                  <button
+                    class="flex h-8 w-8 items-center justify-center rounded-lg text-[11px] font-black text-on-surface-variant transition-colors hover:bg-white"
+                    type="button"
+                  >
+                    3
+                  </button>
+                  <span class="px-1 text-[10px] font-black text-outline/40">...</span>
+                  <button
+                    class="flex h-8 w-8 items-center justify-center rounded-lg text-[11px] font-black text-on-surface-variant transition-colors hover:bg-white"
+                    type="button"
+                  >
+                    101
+                  </button>
+                </div>
+                <button
+                  class="rounded-lg border border-outline-variant/10 bg-white px-4 py-1.5 text-[10px] font-black uppercase transition-all hover:bg-primary hover:text-white"
+                  type="button"
+                >
+                  下一页
+                </button>
+              </div>
+
+              <div class="flex items-center gap-3 text-[10px] font-black text-outline">
+                <span class="uppercase tracking-widest">Jump to page</span>
+                <input
+                  class="h-8 w-12 rounded-lg border border-outline-variant/20 px-1 text-center text-[11px] outline-none focus:ring-2 focus:ring-primary/20"
+                  type="text"
+                  value="1"
+                />
+                <button
+                  class="rounded-lg border border-outline-variant/10 bg-white px-4 py-1.5 uppercase tracking-tighter transition-all hover:bg-primary hover:text-white"
+                  type="button"
+                >
+                  Go
+                </button>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <footer
+          class="flex w-full shrink-0 items-center justify-between border-t border-black/[0.03] bg-white/90 px-8 py-3 text-[10px] backdrop-blur-md"
+        >
+          <div class="tabular-nums font-black tracking-wide text-on-surface-variant">
+            © 2024 EQUITY FOUNDRY. SYSTEM STATUS: <span class="text-primary">OPTIMAL</span>
+          </div>
+          <div class="flex gap-6">
+            <a class="font-black uppercase tracking-widest text-outline transition-all hover:text-primary" href="#"
+              >Legal</a
+            >
+            <a class="font-black uppercase tracking-widest text-outline transition-all hover:text-primary" href="#"
+              >Privacy</a
+            >
+            <a class="font-black uppercase tracking-widest text-outline transition-all hover:text-primary" href="#"
+              >Support</a
+            >
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script>
+      const stockTableBody = document.getElementById("stockTableBody");
+
+      for (let i = 3; i < 30; i += 1) {
+        const tr = document.createElement("tr");
+        const isUp = i % 2 === 0;
+        const colorClass = isUp ? "text-stock-up" : "text-stock-down";
+
+        tr.className =
+          "group cursor-pointer divide-x divide-outline-variant/5 transition-colors hover:bg-primary/5";
+
+        tr.innerHTML = `
+          <td class="px-6 py-4 font-black text-primary">0000${i + 10}.SZ</td>
+          <td class="px-6 py-4 text-sm font-black">示例标的${i}</td>
+          <td class="px-4 py-4">主板</td>
+          <td class="px-4 py-4 opacity-70">技术 / 软件</td>
+          <td class="max-w-[150px] truncate px-4 py-4 opacity-70">AI应用 / 云计算</td>
+          <td class="px-6 py-4 text-right font-black">${(Math.random() * 800).toFixed(2)}</td>
+          <td class="px-4 py-4">03-26</td>
+          <td class="px-4 py-4">否</td>
+          <td class="px-6 py-4 text-right">12.50</td>
+          <td class="px-6 py-4 text-right font-black">12.80</td>
+          <td class="px-6 py-4 text-right font-black ${colorClass}">${isUp ? "+" : "-"}${(
+            Math.random() * 4
+          ).toFixed(2)}%</td>
+          <td class="px-6 py-4 text-right">124,550</td>
+          <td class="px-4 py-4 text-right">12.40</td>
+          <td class="px-4 py-4 text-right">12.10</td>
+          <td class="px-4 py-4 text-right ${colorClass}">${isUp ? "0.0125" : "-0.0042"}</td>
+          <td class="px-4 py-4 text-right font-black ${colorClass}">${(Math.random() * 100).toFixed(2)}</td>
+          <td class="px-4 py-4 text-right">45.20</td>
+          <td class="px-4 py-4 text-right ${colorClass}">${(Math.random() * 100).toFixed(2)}</td>
+        `;
+
+        stockTableBody.appendChild(tr);
+      }
+    </script>
+  </body>
+</html>
