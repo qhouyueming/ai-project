@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html class="light" lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>功能精准迭送工作台 v2.0 专业版</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#3b82f6",
+              surface: "#f8fafc",
+              "border-color": "#e2e8f0",
+              "on-surface": "#1e293b",
+              "on-surface-variant": "#64748b",
+            },
+            fontFamily: {
+              body: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.375rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+
+      body {
+        background-color: #f8fafc;
+      }
+
+      .content-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+        gap: 1.5rem;
+      }
+
+      @media (max-width: 1080px) {
+        aside {
+          position: static !important;
+          width: 100% !important;
+          height: auto !important;
+          border-right: none !important;
+          border-bottom: 1px solid #e2e8f0;
+        }
+
+        main {
+          margin-left: 0 !important;
+        }
+
+        .content-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body class="custom-scrollbar font-body text-on-surface antialiased">
+    <aside class="fixed left-0 top-0 z-40 flex h-screen w-72 flex-col border-r border-border-color bg-white py-6">
+      <div class="mb-8 px-6">
+        <div class="flex items-center gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-white shadow-sm">
+            <span class="material-symbols-outlined">auto_awesome_motion</span>
+          </div>
+          <div>
+            <h1 class="text-base font-bold leading-tight tracking-tight text-on-surface">
+              功能精准迭送工作台
+            </h1>
+            <p class="text-[11px] font-medium text-on-surface-variant">v2.0 专业版</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-4 px-4">
+        <div class="space-y-4 rounded-xl border border-border-color bg-slate-50 p-4">
+          <div class="mb-2 flex items-center gap-2 text-sm font-semibold text-primary">
+            <span class="material-symbols-outlined text-lg">settings</span>
+            <span>任务信息</span>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="flex items-center gap-1 text-xs font-medium text-on-surface-variant">
+              库地址 <span class="text-red-500">(必填)</span>
+            </label>
+            <input
+              class="w-full rounded-md border border-border-color bg-white px-3 py-2 text-xs outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary"
+              type="text"
+              value="http://8.130.11.186:18011/"
+            />
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="flex items-center gap-1 text-xs font-medium text-on-surface-variant">
+              全局要求 <span class="text-on-surface-variant/60">(非必填)</span>
+            </label>
+            <textarea
+              class="custom-scrollbar h-24 w-full resize-none rounded-md border border-border-color bg-white px-3 py-2 text-xs outline-none transition-all focus:border-primary focus:ring-1 focus:ring-primary"
+              placeholder="有数据图引，一旦带引，运动修改这些内容设置的要求流程..."
+            ></textarea>
+          </div>
+        </div>
+
+        <button
+          class="flex w-full items-center justify-center gap-2 rounded-lg bg-primary py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-blue-600 active:scale-95"
+          type="button"
+        >
+          <span class="material-symbols-outlined text-base">play_arrow</span>
+          <span>开始执行任务</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="ml-72 flex min-h-screen flex-col">
+      <header
+        class="sticky top-0 z-50 flex w-full items-center justify-between border-b border-border-color bg-white/80 px-8 py-4 backdrop-blur-md"
+      >
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-primary">
+            <span class="material-symbols-outlined text-sm">schedule</span>
+            <span class="text-xs font-semibold">正在运行</span>
+          </div>
+          <span class="text-xs text-on-surface-variant">最后更新：2026年3月29日 14:23</span>
+        </div>
+
+        <div class="flex items-center gap-4">
+          <button
+            class="flex items-center gap-1.5 text-xs font-medium text-on-surface-variant transition-colors hover:text-primary"
+            type="button"
+          >
+            <span class="material-symbols-outlined text-lg">history</span>
+            修改记录
+          </button>
+        </div>
+      </header>
+
+      <div class="mx-auto w-full max-w-[1600px] flex-grow p-8">
+        <div class="content-grid items-stretch">
+          <div class="flex h-full flex-col">
+            <section class="flex h-full flex-col rounded-xl border border-border-color bg-white p-8 shadow-sm">
+              <div class="mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">track_changes</span>
+                <h3 class="font-bold text-on-surface">目标页面配置</h3>
+              </div>
+              <p class="mb-6 text-xs text-on-surface-variant">
+                支持多张图片上传。可拖拽或点击上传。支持 PNG、JPG、JPEG、WEBP 格式
+              </p>
+
+              <div
+                class="group relative flex flex-grow cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 transition-all hover:border-primary/40"
+              >
+                <div class="flex flex-col items-center gap-3">
+                  <span class="material-symbols-outlined text-4xl text-slate-400 transition-colors group-hover:text-primary">
+                    upload
+                  </span>
+                  <div class="text-center">
+                    <p class="text-sm font-medium text-on-surface">拖拽图片到此处或点击上传</p>
+                    <p class="mt-1 text-xs text-on-surface-variant">
+                      支持 PNG、JPG、JPEG、WEBP 格式，只选择 1 张图
+                    </p>
+                  </div>
+                </div>
+                <input class="absolute inset-0 cursor-pointer opacity-0" type="file" />
+              </div>
+            </section>
+          </div>
+
+          <div class="flex flex-col gap-6">
+            <section class="flex flex-1 flex-col rounded-xl border border-border-color bg-white p-6 shadow-sm">
+              <div class="mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">palette</span>
+                <h3 class="text-sm font-bold text-on-surface">参考设计</h3>
+              </div>
+              <p class="mb-4 text-xs text-on-surface-variant">可选、布局参考。最多上传 3 张图片</p>
+
+              <div
+                class="group relative flex min-h-[160px] flex-grow cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 transition-all hover:border-primary/40"
+              >
+                <div class="flex flex-col items-center gap-2">
+                  <span class="material-symbols-outlined text-3xl text-slate-400 transition-colors group-hover:text-primary">
+                    imagesmode
+                  </span>
+                  <div class="px-4 text-center">
+                    <p class="text-xs font-medium text-on-surface">上传参考设计图</p>
+                    <p class="mt-0.5 text-[10px] text-on-surface-variant">最多 3 张</p>
+                  </div>
+                </div>
+                <input class="absolute inset-0 cursor-pointer opacity-0" multiple type="file" />
+              </div>
+            </section>
+
+            <section class="flex flex-1 flex-col rounded-xl border border-border-color bg-white p-6 shadow-sm">
+              <div class="mb-3 flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary">description</span>
+                <h3 class="text-sm font-bold text-on-surface">局部修改说明</h3>
+              </div>
+              <p class="mb-4 text-[11px] text-on-surface">先在目标截图上框选一个或多个区域。</p>
+
+              <div class="relative flex-grow overflow-hidden rounded-lg border border-border-color bg-slate-50">
+                <textarea
+                  class="custom-scrollbar h-full min-h-[120px] w-full resize-none border-none bg-transparent p-4 text-xs text-on-surface placeholder:text-slate-400 focus:ring-0"
+                  placeholder="请输入局部修改说明..."
+                ></textarea>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>
