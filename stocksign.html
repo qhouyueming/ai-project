@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Equity Foundry | Terminal Login</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-surface": "#1a1c1c",
+              "inverse-on-surface": "#f1f1f1",
+              "primary-container": "#c62828",
+              "on-primary": "#ffffff",
+              "on-primary-fixed": "#410003",
+              "surface-container": "#eeeeee",
+              "on-tertiary-fixed-variant": "#004c6e",
+              "on-tertiary-container": "#d1eaff",
+              "on-tertiary": "#ffffff",
+              "tertiary-fixed": "#c8e6ff",
+              "error-container": "#ffdad6",
+              primary: "#a20513",
+              "on-primary-container": "#ffe0dd",
+              "secondary-container": "#d1e2ec",
+              "tertiary-fixed-dim": "#88ceff",
+              error: "#ba1a1a",
+              "on-secondary-container": "#55656d",
+              "secondary-fixed": "#d4e5ef",
+              "surface-container-high": "#e8e8e8",
+              "primary-fixed": "#ffdad6",
+              "inverse-surface": "#2f3131",
+              "on-error": "#ffffff",
+              tertiary: "#00557a",
+              "on-secondary-fixed-variant": "#394951",
+              "on-secondary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "surface-bright": "#f9f9f9",
+              secondary: "#506169",
+              "tertiary-container": "#006e9d",
+              "inverse-primary": "#ffb4ac",
+              "surface-dim": "#dadada",
+              surface: "#f9f9f9",
+              "on-primary-fixed-variant": "#93000e",
+              "on-tertiary-fixed": "#001e2f",
+              "on-background": "#1a1c1c",
+              background: "#f9f9f9",
+              outline: "#8f706c",
+              "surface-tint": "#b91d20",
+              "surface-container-highest": "#e2e2e2",
+              "on-surface-variant": "#5b403d",
+              "secondary-fixed-dim": "#b8c9d3",
+              "outline-variant": "#e4beba",
+              "primary-fixed-dim": "#ffb4ac",
+              "on-secondary-fixed": "#0d1e25",
+              "surface-container-low": "#f3f3f3",
+              "on-error-container": "#93000a",
+              "surface-variant": "#e2e2e2",
+            },
+            fontFamily: {
+              headline: ["Manrope"],
+              body: ["Inter"],
+              label: ["Inter"],
+            },
+            borderRadius: {
+              DEFAULT: "0.125rem",
+              lg: "0.25rem",
+              xl: "0.5rem",
+              full: "0.75rem",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+      }
+
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(20px);
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      h1,
+      h2,
+      h3,
+      .brand-logo {
+        font-family: "Manrope", sans-serif;
+      }
+
+      .no-line-rule {
+        border-top: none !important;
+      }
+    </style>
+  </head>
+  <body class="bg-background text-on-surface antialiased">
+    <div class="flex h-screen w-screen flex-col overflow-hidden bg-background md:flex-row">
+      <div
+        class="relative hidden items-center justify-center overflow-hidden bg-surface-container p-12 md:flex md:w-1/2 lg:w-1/2 lg:p-24 xl:w-[60%]"
+      >
+        <div class="absolute inset-0 z-0">
+          <img
+            class="h-full w-full object-cover opacity-50 mix-blend-overlay"
+            data-alt="Abstract minimalist stock market chart with clean glowing red lines over a sophisticated charcoal and deep grey background"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFDSl9oVBC5Fh5TzSQVdPFcZQ7Pcg21nA05aLVu7IM5Y3Fx1cjWtF0hnQV7Ch-W7R5c9JR27a93015ebKiNY5jMha2yaBusvoo-cdiB3b72ueCCvyBqj2mCbYQpI5UkaKoueCCxnSbjR1kbZiX7o29KIOvvM-z17yO76pbpRN7ExH2Dd0I4aNchiI97JShxXnq4uYw2RPZkdH_XmaIyD18JuN5yYAyI5F8JP2_MhMewpmIj8bqPrska7YOoC8n9K91rptFV12wELPL"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-tr from-surface-container via-transparent to-surface-bright opacity-80"
+          ></div>
+        </div>
+
+        <div class="relative z-10 w-full max-w-2xl">
+          <h1 class="mb-8 text-6xl font-extrabold leading-[1] tracking-tighter text-on-surface lg:text-8xl xl:text-8xl">
+            智能选股平台
+          </h1>
+          <p class="max-w-lg text-xl font-medium leading-relaxed text-secondary lg:text-2xl">
+            为现代交易者提供精准智能与高效执行。
+          </p>
+          <div class="mt-16 flex gap-16 lg:gap-24">
+            <div>
+              <div class="text-3xl font-bold tracking-tighter text-primary lg:text-4xl">按日更新</div>
+              <div class="mt-2 text-[11px] font-bold uppercase tracking-widest text-secondary lg:text-[12px]">
+                六大指标详细解读
+              </div>
+            </div>
+            <div class="border-l border-outline-variant/30 pl-16 lg:pl-24">
+              <div class="text-3xl font-bold tracking-tighter text-on-surface lg:text-4xl">A股市场</div>
+              <div class="mt-2 text-[11px] font-bold uppercase tracking-widest text-secondary lg:text-[12px]">
+                六大指标详细解读
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="relative flex flex-1 items-center justify-center overflow-y-auto bg-background p-8 sm:p-12 lg:p-24"
+      >
+        <div class="w-full max-w-md py-12">
+          <div class="mb-12 md:hidden">
+            <span class="text-2xl font-black uppercase tracking-tighter text-on-surface"
+              >Equity Foundry</span
+            >
+          </div>
+
+          <div class="relative mb-12">
+            <div class="absolute bottom-1 top-1 -left-6 w-[4px] bg-primary"></div>
+            <h2 class="mb-3 text-4xl font-bold tracking-tight text-on-surface">账号登录</h2>
+            <p class="text-base text-secondary">欢迎回来。请输入您的凭据以访问终端。</p>
+          </div>
+
+          <form class="space-y-8">
+            <div class="space-y-3">
+              <label class="block text-[12px] font-bold uppercase tracking-[0.15em] text-secondary"
+                >用户名</label
+              >
+              <div class="group relative">
+                <span
+                  class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-xl text-secondary/50 transition-colors group-focus-within:text-primary"
+                  >person</span
+                >
+                <input
+                  class="w-full rounded-xl border-none bg-surface-container-low py-4.5 pl-12 pr-4 font-medium text-on-surface outline-none transition-all placeholder:text-secondary/40 focus:bg-surface-container-lowest focus:ring-0"
+                  placeholder="请输入用户名"
+                  style="box-shadow: 0 0 0 1px rgba(228, 190, 186, 0.15)"
+                  type="text"
+                />
+              </div>
+            </div>
+
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="block text-[12px] font-bold uppercase tracking-[0.15em] text-secondary"
+                  >密码</label
+                >
+              </div>
+              <div class="group relative">
+                <span
+                  class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-xl text-secondary/50 transition-colors group-focus-within:text-primary"
+                  >lock</span
+                >
+                <input
+                  class="w-full rounded-xl border-none bg-surface-container-low py-4.5 pl-12 pr-12 font-medium text-on-surface outline-none transition-all placeholder:text-secondary/40 focus:bg-surface-container-lowest focus:ring-0"
+                  placeholder="••••••••"
+                  style="box-shadow: 0 0 0 1px rgba(228, 190, 186, 0.15)"
+                  type="password"
+                />
+                <button
+                  class="absolute right-4 top-1/2 -translate-y-1/2 text-secondary/40 transition-colors hover:text-on-surface"
+                  type="button"
+                >
+                  <span class="material-symbols-outlined text-xl">visibility</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="pt-6">
+              <button
+                class="group flex w-full items-center justify-center gap-3 rounded-xl bg-primary py-5 text-xl font-bold tracking-tight text-on-primary shadow-xl shadow-primary/20 transition-all hover:scale-[0.98] hover:shadow-primary/30 active:scale-[0.96]"
+                type="submit"
+              >
+                进入工作台
+                <span class="material-symbols-outlined text-2xl transition-transform group-hover:translate-x-1"
+                  >arrow_forward</span
+                >
+              </button>
+            </div>
+          </form>
+
+          <div class="mt-12 flex flex-col items-center gap-6 rounded-2xl bg-surface-container-low p-8">
+            <span class="text-[11px] font-bold uppercase tracking-[0.2em] text-secondary/60"
+              >安全生物识别登录</span
+            >
+            <div class="flex gap-6">
+              <button
+                class="flex h-14 w-14 items-center justify-center rounded-full bg-surface-container-lowest shadow-sm transition-all hover:scale-110 hover:shadow-md"
+                type="button"
+              >
+                <span class="material-symbols-outlined text-2xl text-secondary">fingerprint</span>
+              </button>
+              <button
+                class="flex h-14 w-14 items-center justify-center rounded-full bg-surface-container-lowest shadow-sm transition-all hover:scale-110 hover:shadow-md"
+                type="button"
+              >
+                <span class="material-symbols-outlined text-2xl text-secondary">face</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer
+      class="no-line-rule fixed bottom-0 left-0 right-0 z-50 flex w-full flex-col items-center justify-between gap-4 bg-background/80 px-12 py-6 font-['Inter'] text-[11px] uppercase tracking-[0.1em] backdrop-blur-sm dark:bg-slate-950/80 md:flex-row"
+    >
+      <div class="text-[#506169] dark:text-slate-500">
+        © 2024 Equity Foundry. Precision Intelligence for the Modern Trader.
+      </div>
+      <div class="flex gap-8">
+        <a
+          class="text-[#506169] transition-colors hover:text-[#a20513] dark:text-slate-500 dark:hover:text-[#c62828]"
+          href="#"
+          >隐私政策</a
+        >
+        <a
+          class="text-[#506169] transition-colors hover:text-[#a20513] dark:text-slate-500 dark:hover:text-[#c62828]"
+          href="#"
+          >服务条款</a
+        >
+        <a
+          class="text-[#506169] transition-colors hover:text-[#a20513] dark:text-slate-500 dark:hover:text-[#c62828]"
+          href="#"
+          >安全披露</a
+        >
+        <a
+          class="text-[#506169] transition-colors hover:text-[#a20513] dark:text-slate-500 dark:hover:text-[#c62828]"
+          href="#"
+          >帮助中心</a
+        >
+      </div>
+    </footer>
+  </body>
+</html>
