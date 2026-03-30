@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html class="light" lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>个股详情 | Equity Foundry</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-tint": "#c41e1e",
+              "surface-container": "#f4f1ee",
+              "surface-container-low": "#f7f4f1",
+              "outline-variant": "#d1cfcd",
+              "on-surface": "#1e1b1a",
+              "on-surface-variant": "#5a5856",
+              primary: "#c41e1e",
+              surface: "#fcfaf8",
+              background: "#fdf2f2",
+              "primary-container": "#fff1f0",
+              "stock-up": "#ef4444",
+              "stock-down": "#10b981",
+              "brand-dark": "#1f2937"
+            },
+            fontFamily: {
+              headline: ["Inter", "sans-serif"],
+              body: ["Inter", "sans-serif"]
+            },
+            backgroundImage: {
+              "festive-red-bg": "linear-gradient(160deg, #fff5f5 0%, #ffebeb 45%, #ffd6d6 100%)",
+              "brand-glow": "radial-gradient(circle at 20% 20%, rgba(196, 30, 30, 0.03) 0%, transparent 50%)"
+            }
+          }
+        }
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #fff5f5;
+        background-image: linear-gradient(160deg, #fff5f5 0%, #ffebeb 45%, #ffd6d6 100%);
+        background-attachment: fixed;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .material-symbols-outlined {
+        font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+        vertical-align: middle;
+      }
+
+      .card-shadow {
+        box-shadow: 0 8px 30px rgba(196, 30, 30, 0.06);
+      }
+
+      .sidebar-item-active {
+        background: #ffffff;
+        color: #c41e1e;
+        box-shadow: 0 2px 8px rgba(196, 30, 30, 0.08);
+      }
+
+      .ghost-primary-btn {
+        background: #ffffff;
+        border: 2px solid #c41e1e;
+        color: #c41e1e;
+        transition: all 0.2s ease;
+      }
+
+      .ghost-primary-btn:hover {
+        background: #fff1f0;
+        box-shadow: 0 4px 12px rgba(196, 30, 30, 0.1);
+      }
+
+      .control-btn-active {
+        background: #111827;
+        color: #ffffff;
+        border: 2px solid #111827;
+      }
+
+      .control-btn {
+        background: #f3f4f6;
+        color: #374151;
+      }
+
+      .grid-line {
+        stroke: #ece7e4;
+        stroke-dasharray: 4 4;
+      }
+
+      .axis-line {
+        stroke: #d1cfcd;
+      }
+
+      .chart-label {
+        font-size: 11px;
+        fill: #8b817b;
+      }
+
+      .tooltip-panel {
+        box-shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
+      }
+
+      @media (max-width: 1024px) {
+        body {
+          overflow: auto;
+          height: auto;
+        }
+
+        aside {
+          width: 100% !important;
+          height: auto !important;
+          border-right: none !important;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .page-shell {
+          flex-direction: column;
+          min-height: 100vh;
+        }
+      }
+    </style>
+  </head>
+  <body class="flex min-h-screen text-on-surface">
+    <div class="page-shell flex min-h-screen w-full">
+      <aside class="relative flex w-64 shrink-0 flex-col overflow-hidden border-r border-black/[0.03] bg-surface-container-low py-4">
+        <div class="pointer-events-none absolute left-0 top-0 h-full w-full bg-brand-glow opacity-10"></div>
+        <div class="relative z-10 mb-8 px-6">
+          <div class="flex items-center gap-3">
+            <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-white shadow-lg">
+              <span class="material-symbols-outlined text-base">account_balance</span>
+            </div>
+            <div>
+              <div class="text-sm font-extrabold tracking-tight text-[#c41e1e]">交易终端</div>
+              <div class="text-[10px] font-bold text-on-surface-variant/70">PREMIUM EDITION</div>
+            </div>
+          </div>
+        </div>
+
+        <nav class="relative z-10 flex-1 space-y-1.5">
+          <a class="mx-3 flex items-center rounded-lg px-4 py-2.5 text-on-surface-variant transition-all duration-200 hover:bg-white/60 hover:text-[#c41e1e]" href="stockplatform.html">
+            <span class="material-symbols-outlined mr-3 text-xl">grid_view</span>
+            <span class="text-[11px] font-bold tracking-wide">个股列表</span>
+          </a>
+          <a class="sidebar-item-active mx-3 flex items-center rounded-lg px-4 py-2.5 font-bold transition-all" href="stockdetail.html">
+            <span class="material-symbols-outlined mr-3 text-xl" style="font-variation-settings: 'FILL' 1">candlestick_chart</span>
+            <span class="text-[11px] tracking-wide">个股详情</span>
+          </a>
+        </nav>
+      </aside>
+
+      <div class="relative flex min-w-0 flex-1 flex-col overflow-hidden">
+        <header class="flex h-16 w-full shrink-0 items-center justify-between border-b border-black/[0.03] bg-white/90 px-8 backdrop-blur-md">
+          <div class="text-2xl font-black tracking-tighter text-[#c41e1e]">Equity Foundry</div>
+          <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2">
+              <div class="flex h-7 w-7 items-center justify-center rounded-full bg-surface-container">
+                <span class="material-symbols-outlined text-lg text-[#8c8c8c]">person</span>
+              </div>
+              <span class="text-sm font-bold text-on-surface">交易员 001</span>
+            </div>
+            <button class="flex items-center gap-1.5 text-on-surface-variant transition-colors hover:text-primary" type="button">
+              <span class="text-xs font-bold">安全退出</span>
+              <span class="material-symbols-outlined text-lg">logout</span>
+            </button>
+          </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-8">
+          <div class="mx-auto flex w-full max-w-[1500px] flex-col gap-6">
+            <section class="rounded-xl border border-outline-variant/10 bg-white p-8 card-shadow">
+              <div class="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+                <div>
+                  <div class="mb-2 flex items-center gap-3 text-sm text-on-surface-variant">
+                    <span>个股列表</span>
+                    <span class="material-symbols-outlined text-sm">chevron_right</span>
+                    <span class="font-semibold text-on-surface">平安银行</span>
+                  </div>
+                  <div class="mb-3 flex flex-wrap items-center gap-3">
+                    <span class="text-lg font-medium text-on-surface-variant">000001.SZ</span>
+                    <span class="rounded-md bg-blue-50 px-3 py-1 text-sm font-bold text-blue-600">深证主板</span>
+                  </div>
+                  <h1 class="mb-6 text-4xl font-black tracking-tight text-on-surface">平安银行</h1>
+                  <div class="mb-4 flex items-center gap-3 text-sm">
+                    <span class="text-on-surface-variant">所属行业:</span>
+                    <span class="rounded-md bg-orange-50 px-3 py-1 font-semibold text-orange-600">银行</span>
+                  </div>
+                  <div class="flex flex-wrap gap-3 text-sm">
+                    <span class="rounded-md bg-purple-50 px-3 py-1 font-semibold text-purple-600">深圳国资改革</span>
+                    <span class="rounded-md bg-purple-50 px-3 py-1 font-semibold text-purple-600">粤港澳大湾区</span>
+                    <span class="rounded-md bg-purple-50 px-3 py-1 font-semibold text-purple-600">金融科技</span>
+                    <span class="rounded-md bg-purple-50 px-3 py-1 font-semibold text-purple-600">数字货币</span>
+                    <span class="rounded-md bg-purple-50 px-3 py-1 font-semibold text-purple-600">区块链</span>
+                  </div>
+                </div>
+
+                <div class="flex flex-col items-end gap-4">
+                  <a class="inline-flex items-center gap-1 rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white transition hover:opacity-90" href="stockplatform.html">
+                    <span class="material-symbols-outlined text-base">arrow_back</span>
+                    返回
+                  </a>
+                  <div class="text-right">
+                    <div class="text-6xl font-black tracking-tighter text-stock-down">¥5.28</div>
+                    <div class="mt-2 text-xl font-semibold text-stock-down">-0.12 (-2.22%)</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section class="rounded-xl border border-outline-variant/10 bg-white p-8 card-shadow">
+              <div class="mb-8 flex items-center justify-between">
+                <h2 class="text-2xl font-black tracking-tight text-on-surface">核心数据</h2>
+                <div class="rounded-full bg-surface-container-low px-4 py-2 text-xs font-bold text-on-surface-variant">实时数据模拟展示</div>
+              </div>
+              <div class="grid grid-cols-2 gap-x-10 gap-y-8 md:grid-cols-4 lg:grid-cols-8">
+                <div><div class="mb-2 text-sm text-on-surface-variant">开盘</div><div class="text-4xl font-black">5.35</div></div>
+                <div><div class="mb-2 text-sm text-on-surface-variant">昨收</div><div class="text-4xl font-black">5.40</div></div>
+                <div><div class="mb-2 text-sm text-on-surface-variant">最高</div><div class="text-4xl font-black">5.42</div></div>
+                <div><div class="mb-2 text-sm text-on-surface-variant">最低</div><div class="text-4xl font-black">5.26</div></div>
+                <div><div class="mb-2 text-sm text-on-surface-variant">涨停价</div><div class="text-4xl font-black">5.94</div></div>
+                <div><div class="mb-2 text-sm text-on-surface-variant">跌停价</div><div class="text-4xl font-black">4.86</div></div>
+                <div><div class="mb-2 text-sm text-on-surface-variant">成交量</div><div class="text-4xl font-black">1,234.57万手</div></div>
+                <div><div class="mb-2 text-sm text-on-surface-variant">成交金额</div><div class="text-4xl font-black">65.12亿</div></div>
+                <div><div class="mb-2 text-sm text-on-surface-variant">总市值</div><div class="text-3xl font-black">1,023.45亿</div></div>
+                <div><div class="mb-2 text-sm text-on-surface-variant">流通市值</div><div class="text-3xl font-black">987.23亿</div></div>
+                <div><div class="mb-2 text-sm text-on-surface-variant">市盈率(动)</div><div class="text-3xl font-black">12.45</div></div>
+                <div><div class="mb-2 text-sm text-on-surface-variant">市净率</div><div class="text-3xl font-black">0.89</div></div>
+                <div><div class="mb-2 text-sm text-on-surface-variant">换手率</div><div class="text-3xl font-black">1.25%</div></div>
+                <div><div class="mb-2 text-sm text-on-surface-variant">量比</div><div class="text-3xl font-black">1.08</div></div>
+                <div><div class="mb-2 text-sm text-on-surface-variant">委比</div><div class="text-3xl font-black">2.35%</div></div>
+                <div><div class="mb-2 text-sm text-on-surface-variant">振幅</div><div class="text-3xl font-black">2.96%</div></div>
+              </div>
+            </section>
+
+            <section class="rounded-xl border border-outline-variant/10 bg-white p-8 card-shadow">
+              <div class="mb-6 flex flex-wrap items-center gap-2">
+                <span class="text-xs text-on-surface-variant">视图控制</span>
+                <button class="control-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition hover:bg-gray-200" id="zoomInBtn" type="button">放大</button>
+                <button class="control-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition hover:bg-gray-200" id="zoomOutBtn" type="button">缩小</button>
+                <button class="control-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition hover:bg-gray-200" id="centerBtn" type="button">居中</button>
+                <button class="control-btn rounded-lg px-3 py-1.5 text-xs font-semibold transition hover:bg-gray-200" id="resetBtn" type="button">降低</button>
+                <button class="control-btn-active rounded-lg px-3 py-1.5 text-xs font-semibold transition" id="latestBtn" type="button">定位到最新</button>
+              </div>
+
+              <div class="mb-6 hidden gap-4 lg:flex" id="hoverPanel">
+                <div class="flex-shrink-0 rounded-xl border-2 border-red-200 bg-gradient-to-br from-red-50 to-pink-50 p-4">
+                  <div class="mb-1 text-xs text-gray-500">收盘价</div>
+                  <div class="text-4xl font-black text-stock-down" id="hoverClose">5.28</div>
+                  <div class="mt-1 text-sm font-semibold text-stock-down" id="hoverChangeRate">-2.22%</div>
+                </div>
+                <div class="tooltip-panel flex flex-1 flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-outline-variant/10 bg-surface-container-low px-5 py-4 text-sm text-on-surface-variant">
+                  <span>日期</span><span class="font-semibold text-on-surface" id="hoverDate">2026-03-30</span><span class="text-gray-400">|</span>
+                  <span>开</span><span class="font-semibold text-on-surface" id="hoverOpen">5.35</span><span class="text-gray-400">|</span>
+                  <span>高</span><span class="font-semibold text-on-surface" id="hoverHigh">5.42</span><span class="text-gray-400">|</span>
+                  <span>低</span><span class="font-semibold text-on-surface" id="hoverLow">5.26</span><span class="text-gray-400">|</span>
+                  <span>量</span><span class="font-semibold text-on-surface" id="hoverVolume">1.23亿</span><span class="text-gray-400">|</span>
+                  <span>成交额</span><span class="font-semibold text-on-surface" id="hoverTurnover">6.51亿</span>
+                </div>
+              </div>
+
+              <div class="mb-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                <div>
+                  <h3 class="text-4xl font-black tracking-tight text-on-surface">股价走势</h3>
+                  <div class="mt-4 flex flex-wrap gap-4 text-xs font-semibold text-on-surface-variant">
+                    <button class="flex items-center gap-2" data-ma="ma5" type="button"><span class="h-0.5 w-4 bg-blue-500"></span>MA5</button>
+                    <button class="flex items-center gap-2" data-ma="ma10" type="button"><span class="h-0.5 w-4 bg-orange-500"></span>MA10</button>
+                    <button class="flex items-center gap-2" data-ma="ma20" type="button"><span class="h-0.5 w-4 bg-purple-500"></span>MA20</button>
+                    <button class="flex items-center gap-2" data-ma="ma60" type="button"><span class="h-0.5 w-4 bg-emerald-500"></span>MA60</button>
+                  </div>
+                </div>
+                <div class="flex rounded-xl bg-surface-container-low p-1 text-sm font-bold">
+                  <button class="rounded-lg bg-white px-4 py-2 text-on-surface shadow-sm" type="button">日</button>
+                  <button class="rounded-lg px-4 py-2 text-on-surface-variant" type="button">周</button>
+                  <button class="rounded-lg px-4 py-2 text-on-surface-variant" type="button">月</button>
+                  <button class="ml-2 rounded-lg bg-primary px-5 py-2 text-white" type="button">K线视图</button>
+                </div>
+              </div>
+
+              <div class="rounded-2xl border border-outline-variant/10 bg-[#fffdfc] p-4">
+                <svg class="w-full" id="kChart" viewBox="0 0 1200 420" preserveAspectRatio="none"></svg>
+              </div>
+
+              <div class="mt-6 flex flex-wrap items-center gap-2">
+                <button class="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-600 transition hover:bg-gray-200" id="indicatorMenuBtn" type="button">副指标 +</button>
+                <div class="flex items-center gap-2 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-white">成交量</div>
+              </div>
+
+              <div class="mt-4 rounded-2xl border border-outline-variant/10 bg-[#fffdfc] p-4">
+                <svg class="w-full" id="volumeChart" viewBox="0 0 1200 150" preserveAspectRatio="none"></svg>
+              </div>
+            </section>
+          </div>
+        </main>
+
+        <footer class="flex w-full shrink-0 items-center justify-between border-t border-black/[0.03] bg-white/90 px-8 py-3 text-[10px] backdrop-blur-md">
+          <div class="font-black tracking-wide text-on-surface-variant">© 2024 EQUITY FOUNDRY. SYSTEM STATUS: <span class="text-primary">OPTIMAL</span></div>
+          <div class="flex gap-6">
+            <a class="font-black uppercase tracking-widest text-[#8c8c8c] transition-all hover:text-primary" href="#">Legal</a>
+            <a class="font-black uppercase tracking-widest text-[#8c8c8c] transition-all hover:text-primary" href="#">Privacy</a>
+            <a class="font-black uppercase tracking-widest text-[#8c8c8c] transition-all hover:text-primary" href="#">Support</a>
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <script>
+      const dates = [
+        '01-02','01-03','01-06','01-07','01-08','01-09','01-10','01-13','01-14','01-15','01-16','01-17','01-20','01-21',
+        '01-22','01-23','01-24','01-27','01-28','01-29','01-30','02-03','02-04','02-05','02-06','02-07','02-10','02-11',
+        '02-12','02-13','02-14','02-17','02-18','02-19','02-20','02-21','02-24','02-25','02-26','02-27','02-28','03-03',
+        '03-04','03-05','03-06','03-10','03-11','03-12','03-13','03-17','03-18','03-19','03-20','03-21','03-24','03-25','03-26','03-27','03-28','03-30'
+      ];
+
+      const series = [];
+      let prevClose = 6.5;
+      dates.forEach((date, index) => {
+        let trendFactor = 0;
+        if (index < 20) trendFactor = -0.02;
+        else if (index < 40) trendFactor = Math.sin(index * 0.7) * 0.02;
+        else trendFactor = 0.025;
+
+        const wave = Math.sin(index * 0.35) * 0.06 + Math.cos(index * 0.18) * 0.03;
+        const open = prevClose + Math.sin(index * 0.21) * 0.05;
+        const close = open + trendFactor + wave;
+        const high = Math.max(open, close) + 0.07 + Math.abs(Math.sin(index * 0.42)) * 0.04;
+        const low = Math.min(open, close) - 0.07 - Math.abs(Math.cos(index * 0.37)) * 0.03;
+        const volume = Math.round((85000000 + index * 1200000 + Math.abs(close - open) * 260000000) * (1 + Math.abs(wave)));
+
+        series.push({
+          date,
+          open: Number(open.toFixed(2)),
+          close: Number(close.toFixed(2)),
+          high: Number(high.toFixed(2)),
+          low: Number(low.toFixed(2)),
+          volume
+        });
+        prevClose = close;
+      });
+
+      function movingAverage(data, period) {
+        return data.map((item, index) => {
+          if (index < period - 1) return null;
+          const slice = data.slice(index - period + 1, index + 1);
+          const sum = slice.reduce((acc, cur) => acc + cur.close, 0);
+          return Number((sum / period).toFixed(2));
+        });
+      }
+
+      const ma5 = movingAverage(series, 5);
+      const ma10 = movingAverage(series, 10);
+      const ma20 = movingAverage(series, 20);
+      const ma60 = movingAverage(series, 60);
+
+      let zoomLevel = 1;
+      let positionMode = 'end';
+
+      const kChart = document.getElementById('kChart');
+      const volumeChart = document.getElementById('volumeChart');
+
+      function getVisibleData() {
+        const visibleCount = Math.max(18, Math.round(series.length / zoomLevel));
+        if (positionMode === 'center') {
+          const start = Math.max(0, Math.floor((series.length - visibleCount) / 2));
+          return { data: series.slice(start, start + visibleCount), start };
+        }
+        const start = Math.max(0, series.length - visibleCount);
+        return { data: series.slice(start), start };
+      }
+
+      function updateHover(index) {
+        const point = series[index];
+        const prev = series[Math.max(0, index - 1)];
+        const closeEl = document.getElementById('hoverClose');
+        const rateEl = document.getElementById('hoverChangeRate');
+        const dateEl = document.getElementById('hoverDate');
+        const openEl = document.getElementById('hoverOpen');
+        const highEl = document.getElementById('hoverHigh');
+        const lowEl = document.getElementById('hoverLow');
+        const volumeEl = document.getElementById('hoverVolume');
+        const turnoverEl = document.getElementById('hoverTurnover');
+        const changeRate = ((point.close - point.open) / point.open) * 100;
+        const priceClass = point.close >= prev.close ? 'text-stock-up' : 'text-stock-down';
+
+        closeEl.className = 'text-4xl font-black ' + priceClass;
+        rateEl.className = 'mt-1 text-sm font-semibold ' + (changeRate >= 0 ? 'text-stock-up' : 'text-stock-down');
+        openEl.className = 'font-semibold ' + (point.open >= prev.open ? 'text-stock-up' : 'text-stock-down');
+        highEl.className = 'font-semibold ' + (point.high >= prev.high ? 'text-stock-up' : 'text-stock-down');
+        lowEl.className = 'font-semibold ' + (point.low >= prev.low ? 'text-stock-up' : 'text-stock-down');
+        volumeEl.className = 'font-semibold ' + (point.volume >= prev.volume ? 'text-stock-up' : 'text-stock-down');
+
+        closeEl.textContent = point.close.toFixed(2);
+        rateEl.textContent = changeRate.toFixed(2) + '%';
+        dateEl.textContent = '2026-' + point.date;
+        openEl.textContent = point.open.toFixed(2);
+        highEl.textContent = point.high.toFixed(2);
+        lowEl.textContent = point.low.toFixed(2);
+        volumeEl.textContent = (point.volume / 100000000).toFixed(2) + '亿';
+        turnoverEl.textContent = ((point.volume * point.close) / 100000000).toFixed(2) + '亿';
+      }
+
+      function drawChart() {
+        const width = 1200;
+        const height = 420;
+        const padding = { top: 16, right: 16, bottom: 42, left: 40 };
+        const innerWidth = width - padding.left - padding.right;
+        const innerHeight = height - padding.top - padding.bottom;
+
+        const { data, start } = getVisibleData();
+        const highs = data.map(d => d.high);
+        const lows = data.map(d => d.low);
+        const maxPrice = Math.max(...highs) + 0.04;
+        const minPrice = Math.min(...lows) - 0.04;
+        const stepX = innerWidth / data.length;
+        const candleWidth = Math.max(stepX * 0.7, 8);
+        const priceToY = value => padding.top + ((maxPrice - value) / (maxPrice - minPrice)) * innerHeight;
+
+        let svg = '';
+
+        for (let i = 0; i < 5; i += 1) {
+          const y = padding.top + (innerHeight / 4) * i;
+          const price = maxPrice - ((maxPrice - minPrice) / 4) * i;
+          svg += '<line class="grid-line" x1="' + padding.left + '" y1="' + y + '" x2="' + (width - padding.right) + '" y2="' + y + '"></line>';
+          svg += '<text class="chart-label" x="8" y="' + (y + 4) + '">' + price.toFixed(2) + '</text>';
+        }
+
+        svg += '<line class="axis-line" x1="' + padding.left + '" y1="' + (height - padding.bottom) + '" x2="' + (width - padding.right) + '" y2="' + (height - padding.bottom) + '"></line>';
+
+        const makePath = (values, color) => {
+          let path = '';
+          values.forEach((value, index) => {
+            if (value === null) return;
+            const localIndex = index - start;
+            if (localIndex < 0 || localIndex >= data.length) return;
+            const x = padding.left + stepX * localIndex + stepX / 2;
+            const y = priceToY(value);
+            path += (path ? ' L ' : 'M ') + x + ' ' + y;
+          });
+          if (!path) return '';
+          return '<path d="' + path + '" fill="none" stroke="' + color + '" stroke-width="2"></path>';
+        };
+
+        data.forEach((item, index) => {
+          const x = padding.left + stepX * index + stepX / 2;
+          const highY = priceToY(item.high);
+          const lowY = priceToY(item.low);
+          const openY = priceToY(item.open);
+          const closeY = priceToY(item.close);
+          const isRising = item.close >= item.open;
+          const color = isRising ? '#ef4444' : '#10b981';
+          const bodyTop = Math.min(openY, closeY);
+          const bodyHeight = Math.max(Math.abs(closeY - openY), 2);
+          const globalIndex = start + index;
+
+          svg += '<g data-index="' + globalIndex + '">';
+          svg += '<line x1="' + x + '" y1="' + highY + '" x2="' + x + '" y2="' + lowY + '" stroke="' + color + '" stroke-width="2"></line>';
+          svg += '<rect x="' + (x - candleWidth / 2) + '" y="' + bodyTop + '" width="' + candleWidth + '" height="' + bodyHeight + '" fill="' + (isRising ? color : '#ffffff') + '" stroke="' + color + '" stroke-width="2"></rect>';
+          svg += '<rect x="' + (x - stepX / 2) + '" y="' + padding.top + '" width="' + stepX + '" height="' + innerHeight + '" fill="transparent"></rect>';
+          svg += '</g>';
+        });
+
+        svg += makePath(ma5, '#3b82f6');
+        svg += makePath(ma10, '#f97316');
+        svg += makePath(ma20, '#a855f7');
+        svg += makePath(ma60, '#10b981');
+
+        data.forEach((item, index) => {
+          if (index % Math.ceil(data.length / 8) !== 0 && index !== data.length - 1) return;
+          const x = padding.left + stepX * index + stepX / 2;
+          svg += '<text class="chart-label" x="' + x + '" y="' + (height - 14) + '" text-anchor="middle">' + item.date + '</text>';
+        });
+
+        kChart.innerHTML = svg;
+
+        kChart.querySelectorAll('g[data-index]').forEach(node => {
+          node.addEventListener('mouseenter', event => {
+            const index = Number(event.currentTarget.getAttribute('data-index'));
+            updateHover(index);
+          });
+        });
+      }
+
+      function drawVolume() {
+        const width = 1200;
+        const height = 150;
+        const padding = { top: 10, right: 16, bottom: 26, left: 40 };
+        const innerWidth = width - padding.left - padding.right;
+        const innerHeight = height - padding.top - padding.bottom;
+        const { data } = getVisibleData();
+        const maxVolume = Math.max(...data.map(d => d.volume));
+        const stepX = innerWidth / data.length;
+        const barWidth = Math.max(stepX * 0.65, 6);
+
+        let svg = '';
+        svg += '<line class="axis-line" x1="' + padding.left + '" y1="' + (height - padding.bottom) + '" x2="' + (width - padding.right) + '" y2="' + (height - padding.bottom) + '"></line>';
+
+        data.forEach((item, index) => {
+          const x = padding.left + stepX * index + stepX / 2 - barWidth / 2;
+          const barHeight = (item.volume / maxVolume) * innerHeight;
+          const y = height - padding.bottom - barHeight;
+          const fill = item.close >= item.open ? '#ef4444' : '#10b981';
+          svg += '<rect x="' + x + '" y="' + y + '" width="' + barWidth + '" height="' + barHeight + '" rx="2" fill="' + fill + '"></rect>';
+        });
+
+        svg += '<text class="chart-label" x="8" y="18">成交量</text>';
+        svg += '<text class="chart-label" x="8" y="' + (height - 30) + '">0</text>';
+        svg += '<text class="chart-label" x="8" y="40">' + (maxVolume / 100000000).toFixed(1) + '亿</text>';
+        volumeChart.innerHTML = svg;
+      }
+
+      function updateButtons() {
+        document.getElementById('centerBtn').className = (positionMode === 'center' ? 'control-btn-active' : 'control-btn') + ' rounded-lg px-3 py-1.5 text-xs font-semibold transition hover:bg-gray-200';
+        document.getElementById('latestBtn').className = (positionMode === 'end' ? 'control-btn-active' : 'control-btn') + ' rounded-lg px-3 py-1.5 text-xs font-semibold transition hover:bg-gray-200';
+      }
+
+      document.getElementById('zoomInBtn').addEventListener('click', () => {
+        zoomLevel = Math.min(zoomLevel + 0.2, 2);
+        drawChart();
+        drawVolume();
+      });
+
+      document.getElementById('zoomOutBtn').addEventListener('click', () => {
+        zoomLevel = Math.max(zoomLevel - 0.2, 0.5);
+        drawChart();
+        drawVolume();
+      });
+
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        zoomLevel = 1;
+        drawChart();
+        drawVolume();
+      });
+
+      document.getElementById('centerBtn').addEventListener('click', () => {
+        positionMode = 'center';
+        updateButtons();
+        drawChart();
+        drawVolume();
+      });
+
+      document.getElementById('latestBtn').addEventListener('click', () => {
+        positionMode = 'end';
+        updateButtons();
+        drawChart();
+        drawVolume();
+      });
+
+      updateHover(series.length - 1);
+      updateButtons();
+      drawChart();
+      drawVolume();
+    </script>
+  </body>
+</html>
