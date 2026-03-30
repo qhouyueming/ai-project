@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>个股详情</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/prop-types@15/prop-types.min.js"></script>
+    <script crossorigin src="https://unpkg.com/recharts@2.15.2/umd/Recharts.min.js"></script>
+    <script crossorigin src="https://unpkg.com/lucide-react@0.487.0/dist/umd/lucide-react.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      html, body, #root {
+        min-height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel" data-presets="react">
+      const { useState } = React;
+      const { createRoot } = ReactDOM;
+      const { ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } = Recharts;
+      const { Menu, User, LogOut, ChevronRight, ArrowLeft, Home, TrendingUp, X, Plus, Settings } = LucideReact;
+
+      function Sidebar({ isOpen, onClose }) {
+        return (
+          <>
+            {isOpen && (
+              <div
+                className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                onClick={onClose}
+              />
+            )}
+
+            <aside className={`
+              fixed top-0 left-0 h-full w-64 bg-white border-r border-gray-200 z-50
+              transform transition-transform duration-300 ease-in-out
+              ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+            `}>
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-8">
+                  <div>
+                    <div className="text-red-600 font-bold text-lg">交易终端</div>
+                    <div className="text-xs text-gray-500 mt-1">PREMIUM EDITION</div>
+                  </div>
+                  <button
+                    onClick={onClose}
+                    className="lg:hidden text-gray-500 hover:text-gray-700"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <nav className="space-y-2">
+                  <a href="#" className="flex items-center gap-3 px-4 py-3 text-red-600 bg-red-50 rounded-lg">
+                    <Home className="w-5 h-5" />
+                    <span className="font-medium">个股列表</span>
+                  </a>
+                  <a href="#" className="flex items-center gap-3 px-4 py-3 text-gray-600 hover:bg-gray-50 rounded-lg">
+                    <TrendingUp className="w-5 h-5" />
+                    <span>指数大盘</span>
+                  </a>
+                </nav>
+              </div>
+
+              <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200">
+                <div className="text-xs text-gray-500">
+                  © 2024 EQUITY FOUNDRY. SYSTEM STATUS: <span className="text-red-600 font-medium">OPTIMAL</span>
+                </div>
+              </div>
+            </aside>
+          </>
+        );
+      }
+
+      function Header({ onMenuClick }) {
+        return (
+          <header className="bg-white border-b border-gray-200 sticky top-0 z-30">
+            <div className="flex items-center justify-between px-4 lg:px-6 py-4">
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={onMenuClick}
+                  className="lg:hidden text-gray-600 hover:text-gray-900"
+                >
+                  <Menu className="w-6 h-6" />
+                </button>
+                <h1 className="text-2xl font-bold text-red-600">个股详情</h1>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 text-sm">
+                  <User className="w-4 h-4 text-gray-500" />
+                  <span className="text-gray-700">交易员 001</span>
+                </div>
+                <button className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900">
+                  <span className="hidden sm:inline">安全退出</span>
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between px-4 lg:px-6 pb-3">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <a href="#" className="hover:text-red-600 transition-colors">个股列表</a>
+                <ChevronRight className="w-4 h-4" />
+                <span className="text-gray-900 font-medium">平安银行</span>
+              </div>
+
+              <button
+                onClick={() => window.history.back()}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-red-600 text-white hover:bg-red-700 rounded-lg transition-colors text-sm"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>返回</span>
+              </button>
+            </div>
+          </header>
+        );
+      }
+
+      function StockOverview() {
+        const stockData = {
+          code: '000001.SZ',
+          name: '平安银行',
+          price: 5.28,
+          change: -0.12,
+          changePercent: -2.22,
+          industry: '银行',
+          themes: ['深圳国资改革', '粤港澳大湾区', '金融科技', '数字货币', '区块链'],
+        };
+
+        const isPositive = stockData.change >= 0;
+
+        return (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-4">
+                <div>
+                  <div className="flex items-center gap-3">
+                    <div className="text-sm text-gray-500">{stockData.code}</div>
+                    <div className="px-3 py-1 bg-blue-50 text-blue-600 rounded text-sm font-medium">
+                      深证主板
+                    </div>
+                  </div>
+                  <h2 className="text-2xl font-bold text-gray-900 mt-1">{stockData.name}</h2>
+                </div>
+              </div>
+
+              <div className="flex items-baseline gap-2">
+                <span className={`text-3xl font-bold ${isPositive ? 'text-red-600' : 'text-green-600'}`}>
+                  ¥{stockData.price.toFixed(2)}
+                </span>
+                <span className={`text-sm font-medium ${isPositive ? 'text-red-600' : 'text-green-600'}`}>
+                  {isPositive ? '+' : ''}{stockData.change.toFixed(2)} ({isPositive ? '+' : ''}{stockData.changePercent.toFixed(2)}%)
+                </span>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-100 pt-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500 min-w-[70px]">所属行业:</span>
+                <div className="px-3 py-1 bg-orange-50 text-orange-700 rounded text-sm font-medium">
+                  {stockData.industry}
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2">
+                <span className="text-sm text-gray-500 min-w-[70px] pt-1">全部题材:</span>
+                <div className="flex flex-wrap gap-2">
+                  {stockData.themes.map((theme) => (
+                    <div key={theme} className="px-3 py-1 bg-purple-50 text-purple-700 rounded text-sm font-medium">
+                      {theme}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      function CoreMetrics({ showKLine, setShowKLine, period, setPeriod }) {
+        const metrics = [
+          { label: '开盘', value: '5.35' },
+          { label: '昨收', value: '5.40' },
+          { label: '最高', value: '5.42' },
+          { label: '最低', value: '5.26' },
+          { label: '涨停价', value: '5.94' },
+          { label: '跌停价', value: '4.86' },
+          { label: '成交量', value: '1,234.57万手' },
+          { label: '成交金额', value: '65.12亿' },
+          { label: '总市值', value: '1,023.45亿' },
+          { label: '流通市值', value: '987.23亿' },
+          { label: '市盈率(动)', value: '12.45' },
+          { label: '市净率', value: '0.89' },
+          { label: '换手率', value: '1.25%' },
+          { label: '量比', value: '1.08' },
+          { label: '委比', value: '2.35%' },
+          { label: '振幅', value: '2.96%' },
+          { label: 'MA20', value: '5.68' },
+          { label: 'RSI12', value: '45.32' },
+          { label: 'MACD', value: '-0.08' },
+        ];
+
+        return (
+          <div className="space-y-4">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">核心数据</h3>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+                    {['日', '周', '月'].map((p) => (
+                      <button
+                        key={p}
+                        onClick={() => setPeriod(p)}
+                        className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                          period === p
+                            ? 'bg-white text-gray-900 font-medium shadow-sm'
+                            : 'text-gray-600 hover:text-gray-900'
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => setShowKLine(!showKLine)}
+                    className={`px-4 py-2 text-sm rounded-lg border-2 transition-colors ${
+                      showKLine
+                        ? 'bg-red-600 text-white border-red-600'
+                        : 'bg-white text-gray-600 border-gray-300 hover:border-gray-400'
+                    }`}
+                  >
+                    K线视图
+                  </button>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-4">
+                {metrics.map((metric) => (
+                  <div key={metric.label} className="flex flex-col">
+                    <span className="text-xs text-gray-500 mb-1">{metric.label}</span>
+                    <span className="text-base font-semibold text-gray-900">{metric.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      function StockChart({ showKLine, period }) {
+        const [activeIndicators, setActiveIndicators] = useState(['成交量']);
+        const [showIndicatorMenu, setShowIndicatorMenu] = useState(false);
+        const [visibleMAs, setVisibleMAs] = useState({ ma5: true, ma10: true, ma20: true, ma60: true });
+        const [zoomLevel, setZoomLevel] = useState(1);
+        const [position, setPosition] = useState('end');
+        const [hoveredData, setHoveredData] = useState(null);
+        const [previousData, setPreviousData] = useState(null);
+
+        const availableIndicators = ['成交量', 'MACD', 'KDJ', 'RSI', 'BOLL'];
+
+        const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.2, 2));
+        const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.2, 0.5));
+        const handleResetZoom = () => setZoomLevel(1);
+        const handleCenter = () => setPosition('center');
+        const handleLatest = () => setPosition('end');
+
+        const generateKLineData = () => {
+          const data = [];
+          const dates = [
+            '01-02', '01-03', '01-06', '01-07', '01-08', '01-09', '01-10',
+            '01-13', '01-14', '01-15', '01-16', '01-17', '01-20', '01-21',
+            '01-22', '01-23', '01-24', '01-27', '01-28', '01-29', '01-30',
+            '02-03', '02-04', '02-05', '02-06', '02-07', '02-10', '02-11',
+            '02-12', '02-13', '02-14', '02-17', '02-18', '02-19', '02-20',
+            '02-21', '02-24', '02-25', '02-26', '02-27', '02-28', '03-03',
+            '03-04', '03-05', '03-06', '03-10', '03-11', '03-12', '03-13',
+            '03-17', '03-18', '03-19', '03-20', '03-21', '03-24', '03-25', '03-26', '03-27', '03-28', '03-30'
+          ];
+
+          let prevClose = 6.5;
+          dates.forEach((date, index) => {
+            let trendFactor = 0;
+            if (index < 20) trendFactor = -0.02;
+            else if (index < 40) trendFactor = (Math.random() - 0.5) * 0.01;
+            else trendFactor = 0.025;
+
+            const dailyChange = trendFactor + (Math.random() - 0.5) * 0.15;
+            const open = prevClose + (Math.random() - 0.5) * 0.08;
+            const close = open + dailyChange;
+            const high = Math.max(open, close) + Math.random() * 0.12;
+            const low = Math.min(open, close) - Math.random() * 0.12;
+            const volume = (Math.random() * 150000000 + 80000000) * (1 + Math.abs(dailyChange));
+
+            data.push({
+              date,
+              open: Number(open.toFixed(2)),
+              close: Number(close.toFixed(2)),
+              high: Number(high.toFixed(2)),
+              low: Number(low.toFixed(2)),
+              volume: Math.round(volume),
+            });
+
+            prevClose = close;
+          });
+
+          return data;
+        };
+
+        const [klineData] = useState(generateKLineData());
+
+        const calculateMA = (data, period) => {
+          return data.map((item, index) => {
+            if (index < period - 1) return null;
+            const sum = data.slice(index - period + 1, index + 1).reduce((acc, cur) => acc + cur.close, 0);
+            return Number((sum / period).toFixed(2));
+          });
+        };
+
+        const ma5 = calculateMA(klineData, 5);
+        const ma10 = calculateMA(klineData, 10);
+        const ma20 = calculateMA(klineData, 20);
+        const ma60 = calculateMA(klineData, 60);
+
+        const chartData = klineData.map((item, index) => ({
+          ...item,
+          ma5: ma5[index],
+          ma10: ma10[index],
+          ma20: ma20[index],
+          ma60: ma60[index],
+        }));
+
+        const CustomCandlestick = (props) => {
+          const { chartData, xAxisMap, yAxisMap, offset } = props;
+          if (!chartData || !xAxisMap || !yAxisMap) return null;
+          const xAxis = xAxisMap[0];
+          const yAxis = yAxisMap['price'];
+          if (!xAxis || !yAxis) return null;
+
+          const { x: chartX, y: chartY, width: chartWidth } = offset;
+          const dataCount = klineData.length;
+          const candleWidth = Math.max((chartWidth / dataCount) * 0.75, 6);
+
+          return (
+            <g>
+              {klineData.map((item, index) => {
+                const xPos = chartX + (chartWidth / dataCount) * index + (chartWidth / dataCount) / 2;
+                const isRising = item.close >= item.open;
+                const color = isRising ? '#EF4444' : '#10B981';
+                const highY = chartY + yAxis.scale(item.high);
+                const lowY = chartY + yAxis.scale(item.low);
+                const openY = chartY + yAxis.scale(item.open);
+                const closeY = chartY + yAxis.scale(item.close);
+                const bodyTop = Math.min(openY, closeY);
+                const bodyHeight = Math.abs(closeY - openY) || 2;
+
+                return (
+                  <g key={`candle-main-${index}`}>
+                    <line x1={xPos} y1={highY} x2={xPos} y2={lowY} stroke={color} strokeWidth={2} />
+                    <rect
+                      x={xPos - candleWidth / 2}
+                      y={bodyTop}
+                      width={candleWidth}
+                      height={bodyHeight}
+                      fill={isRising ? color : 'white'}
+                      stroke={color}
+                      strokeWidth={2}
+                    />
+                  </g>
+                );
+              })}
+            </g>
+          );
+        };
+
+        const toggleIndicator = (indicator) => {
+          if (activeIndicators.includes(indicator)) {
+            setActiveIndicators(activeIndicators.filter((i) => i !== indicator));
+          } else if (activeIndicators.length < 4) {
+            setActiveIndicators([...activeIndicators, indicator]);
+            setShowIndicatorMenu(false);
+          }
+        };
+
+        const removeIndicator = (indicator) => {
+          setActiveIndicators(activeIndicators.filter((i) => i !== indicator));
+        };
+
+        const availableToAdd = availableIndicators.filter((ind) => !activeIndicators.includes(ind));
+
+        return (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            {showKLine && (
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-xs text-gray-500">视图控制</span>
+                <div className="flex items-center gap-1">
+                  <button onClick={handleZoomIn} className="px-3 py-1.5 text-xs text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">放大</button>
+                  <button onClick={handleZoomOut} className="px-3 py-1.5 text-xs text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">缩小</button>
+                  <button
+                    onClick={handleCenter}
+                    className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${
+                      position === 'center'
+                        ? 'text-white bg-gray-900 border-2 border-gray-900'
+                        : 'text-gray-700 bg-gray-100 hover:bg-gray-200'
+                    }`}
+                  >
+                    居中
+                  </button>
+                  <button onClick={handleResetZoom} className="px-3 py-1.5 text-xs text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">降低</button>
+                  <button
+                    onClick={handleLatest}
+                    className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${
+                      position === 'end'
+                        ? 'text-white bg-gray-900 border-2 border-gray-900'
+                        : 'text-gray-700 bg-gray-100 hover:bg-gray-200'
+                    }`}
+                  >
+                    定位到最新
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {showKLine && hoveredData && previousData && (
+              <div className="mb-4 flex gap-4">
+                <div className="flex-shrink-0 p-4 bg-gradient-to-br from-red-50 to-pink-50 rounded-lg border-2 border-red-200">
+                  <div className="text-xs text-gray-500 mb-1">收盘价</div>
+                  <div className={`text-4xl font-bold ${
+                    hoveredData.close > previousData.close ? 'text-red-600' :
+                    hoveredData.close < previousData.close ? 'text-green-600' :
+                    'text-gray-900'
+                  }`}>
+                    {hoveredData.close.toFixed(2)}
+                  </div>
+                  <div className={`text-sm mt-1 font-medium ${
+                    hoveredData.close >= hoveredData.open ? 'text-red-600' : 'text-green-600'
+                  }`}>
+                    {((hoveredData.close - hoveredData.open) / hoveredData.open * 100).toFixed(2)}%
+                  </div>
+                </div>
+
+                <div className="flex-1 flex items-center py-2">
+                  <div className="flex flex-wrap items-center gap-x-1 text-sm text-gray-700">
+                    <span className="text-gray-500">日期</span>
+                    <span className="font-medium">2026-{hoveredData.date}</span>
+                    <span className="text-gray-400 mx-1">|</span>
+
+                    <span className="text-gray-500">开</span>
+                    <span className={`font-medium ${
+                      hoveredData.open > previousData.open ? 'text-red-600' :
+                      hoveredData.open < previousData.open ? 'text-green-600' :
+                      'text-gray-900'
+                    }`}>
+                      {hoveredData.open.toFixed(2)}
+                    </span>
+                    <span className="text-gray-400 mx-1">|</span>
+
+                    <span className="text-gray-500">高</span>
+                    <span className={`font-medium ${
+                      hoveredData.high > previousData.high ? 'text-red-600' :
+                      hoveredData.high < previousData.high ? 'text-green-600' :
+                      'text-gray-900'
+                    }`}>
+                      {hoveredData.high.toFixed(2)}
+                    </span>
+                    <span className="text-gray-400 mx-1">|</span>
+
+                    <span className="text-gray-500">低</span>
+                    <span className={`font-medium ${
+                      hoveredData.low > previousData.low ? 'text-red-600' :
+                      hoveredData.low < previousData.low ? 'text-green-600' :
+                      'text-gray-900'
+                    }`}>
+                      {hoveredData.low.toFixed(2)}
+                    </span>
+                    <span className="text-gray-400 mx-1">|</span>
+
+                    <span className="text-gray-500">量</span>
+                    <span className={`font-medium ${
+                      hoveredData.volume > previousData.volume ? 'text-red-600' :
+                      hoveredData.volume < previousData.volume ? 'text-green-600' :
+                      'text-gray-900'
+                    }`}>
+                      {(hoveredData.volume / 100000000).toFixed(2)}亿
+                    </span>
+                    <span className="text-gray-400 mx-1">|</span>
+
+                    <span className="text-gray-500">成交额</span>
+                    <span className="font-medium">{((hoveredData.volume * hoveredData.close) / 100000000).toFixed(2)}亿</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">股价走势</h3>
+                {showKLine && (
+                  <div className="flex items-center gap-4 mt-2 text-xs">
+                    <button onClick={() => setVisibleMAs({ ...visibleMAs, ma5: !visibleMAs.ma5 })} className={`flex items-center gap-1 transition-opacity ${!visibleMAs.ma5 && 'opacity-40'}`}>
+                      <div className="w-3 h-0.5 bg-blue-500"></div>
+                      <span className="text-gray-600">MA5</span>
+                    </button>
+                    <button onClick={() => setVisibleMAs({ ...visibleMAs, ma10: !visibleMAs.ma10 })} className={`flex items-center gap-1 transition-opacity ${!visibleMAs.ma10 && 'opacity-40'}`}>
+                      <div className="w-3 h-0.5 bg-orange-500"></div>
+                      <span className="text-gray-600">MA10</span>
+                    </button>
+                    <button onClick={() => setVisibleMAs({ ...visibleMAs, ma20: !visibleMAs.ma20 })} className={`flex items-center gap-1 transition-opacity ${!visibleMAs.ma20 && 'opacity-40'}`}>
+                      <div className="w-3 h-0.5 bg-purple-500"></div>
+                      <span className="text-gray-600">MA20</span>
+                    </button>
+                    <button onClick={() => setVisibleMAs({ ...visibleMAs, ma60: !visibleMAs.ma60 })} className={`flex items-center gap-1 transition-opacity ${!visibleMAs.ma60 && 'opacity-40'}`}>
+                      <div className="w-3 h-0.5 bg-green-500"></div>
+                      <span className="text-gray-600">MA60</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {showKLine && (
+              <>
+                <div className="mb-6">
+                  <ResponsiveContainer width="100%" height={400}>
+                    <ComposedChart
+                      data={chartData}
+                      margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                      onMouseMove={(e) => {
+                        if (e && e.activePayload && e.activePayload[0]) {
+                          const currentData = e.activePayload[0].payload;
+                          const currentIndex = chartData.findIndex((d) => d.date === currentData.date);
+                          if (currentIndex > 0) setPreviousData(chartData[currentIndex - 1]);
+                          setHoveredData(currentData);
+                        }
+                      }}
+                    >
+                      <CartesianGrid key="main-grid" strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                      <XAxis key="main-xaxis" dataKey="date" stroke="#9ca3af" style={{ fontSize: '11px' }} interval="preserveStartEnd" tickMargin={8} />
+                      <YAxis key="main-yaxis" yAxisId="price" stroke="#9ca3af" style={{ fontSize: '11px' }} domain={['auto', 'auto']} tickFormatter={(value) => value.toFixed(2)} />
+
+                      <CustomCandlestick />
+
+                      {visibleMAs.ma5 && <Line key="ma5-line" yAxisId="price" type="monotone" dataKey="ma5" stroke="#3B82F6" strokeWidth={1.5} dot={false} connectNulls />}
+                      {visibleMAs.ma10 && <Line key="ma10-line" yAxisId="price" type="monotone" dataKey="ma10" stroke="#F97316" strokeWidth={1.5} dot={false} connectNulls />}
+                      {visibleMAs.ma20 && <Line key="ma20-line" yAxisId="price" type="monotone" dataKey="ma20" stroke="#A855F7" strokeWidth={1.5} dot={false} connectNulls />}
+                      {visibleMAs.ma60 && <Line key="ma60-line" yAxisId="price" type="monotone" dataKey="ma60" stroke="#10B981" strokeWidth={1.5} dot={false} connectNulls />}
+                    </ComposedChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowIndicatorMenu(!showIndicatorMenu)}
+                      disabled={activeIndicators.length >= 4}
+                      className={`flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg transition-colors ${
+                        activeIndicators.length >= 4
+                          ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>副指标</span>
+                    </button>
+
+                    {showIndicatorMenu && availableToAdd.length > 0 && (
+                      <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[100px]">
+                        {availableToAdd.map((indicator) => (
+                          <button
+                            key={indicator}
+                            onClick={() => toggleIndicator(indicator)}
+                            className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg transition-colors"
+                          >
+                            {indicator}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {activeIndicators.map((indicator) => (
+                    <div key={indicator} className="flex items-center gap-2 px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs">
+                      <span>{indicator}</span>
+                      <button onClick={() => removeIndicator(indicator)} className="hover:bg-red-700 rounded p-0.5 transition-colors">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+
+                  {activeIndicators.length === 0 && <span className="text-xs text-gray-400">暂无副指标</span>}
+                </div>
+
+                {activeIndicators.map((indicator, index) => (
+                  <div key={`indicator-${indicator}-${index}`} className={index > 0 ? 'mt-4' : ''}>
+                    <ResponsiveContainer width="100%" height={120}>
+                      <ComposedChart data={chartData}>
+                        <CartesianGrid key={`grid-${indicator}-${index}`} strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
+                        <XAxis key={`xaxis-${indicator}-${index}`} dataKey="date" stroke="#9ca3af" style={{ fontSize: '11px' }} interval="preserveStartEnd" />
+                        <YAxis key={`yaxis-${indicator}-${index}`} stroke="#9ca3af" style={{ fontSize: '11px' }} tickFormatter={(value) => indicator === '成交量' ? `${(value / 100000000).toFixed(1)}亿` : value.toFixed(2)} />
+                        <Tooltip
+                          key={`tooltip-${indicator}-${index}`}
+                          contentStyle={{
+                            backgroundColor: 'white',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '8px',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                            fontSize: '12px'
+                          }}
+                          formatter={(value) => {
+                            if (indicator === '成交量') return [(value / 100000000).toFixed(2) + '亿', '成交量'];
+                            return [value, indicator];
+                          }}
+                        />
+                        {indicator === '成交量' && (
+                          <Bar key={`volume-bar-${index}`} dataKey="volume" radius={[2, 2, 0, 0]}>
+                            {chartData.map((entry, idx) => (
+                              <Cell key={`cell-${index}-${entry.date}-${idx}`} fill={entry.close >= entry.open ? '#EF4444' : '#10B981'} />
+                            ))}
+                          </Bar>
+                        )}
+                      </ComposedChart>
+                    </ResponsiveContainer>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+        );
+      }
+
+      function HistoricalData({ period }) {
+        const [currentPage, setCurrentPage] = useState(1);
+        const [jumpToPage, setJumpToPage] = useState('');
+        const [showColumnControl, setShowColumnControl] = useState(false);
+        const itemsPerPage = 50;
+
+        const allColumns = [
+          { key: 'date', label: '日期', fixed: true },
+          { key: 'open', label: '开盘' },
+          { key: 'close', label: '收盘' },
+          { key: 'high', label: '最高' },
+          { key: 'low', label: '最低' },
+          { key: 'change', label: '涨跌额' },
+          { key: 'changePercent', label: '涨跌幅' },
+          { key: 'volume', label: '成交量' },
+          { key: 'amount', label: '成交额' },
+          { key: 'ma5', label: 'MA5' },
+          { key: 'ma10', label: 'MA10' },
+          { key: 'ma20', label: 'MA20' },
+          { key: 'ma60', label: 'MA60' },
+          { key: 'rsi6', label: 'RSI6' },
+          { key: 'rsi12', label: 'RSI12' },
+          { key: 'rsi24', label: 'RSI24' },
+          { key: 'diff', label: 'DIFF' },
+          { key: 'dea', label: 'DEA' },
+          { key: 'macd', label: 'MACD' },
+          { key: 'bollUpper', label: 'BOLL上轨' },
+          { key: 'bollMiddle', label: 'BOLL中轨' },
+          { key: 'bollLower', label: 'BOLL下轨' },
+          { key: 'k', label: 'K' },
+          { key: 'd', label: 'D' },
+          { key: 'j', label: 'J' },
+        ];
+
+        const [selectedColumns, setSelectedColumns] = useState([
+          'date', 'open', 'high', 'low', 'close', 'changePercent',
+          'volume', 'amount', 'ma5', 'ma10', 'ma20'
+        ]);
+
+        const generateHistoricalData = () => {
+          const data = [];
+          const startDate = new Date('2018-01-01');
+          const endDate = new Date('2026-03-30');
+          const currentDate = new Date(startDate);
+          let price = 5.2;
+
+          while (currentDate <= endDate) {
+            const dayOfWeek = currentDate.getDay();
+            if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+              const change = (Math.random() - 0.5) * 0.3;
+              const open = price + (Math.random() - 0.5) * 0.1;
+              const close = open + change;
+              const high = Math.max(open, close) + Math.random() * 0.15;
+              const low = Math.min(open, close) - Math.random() * 0.15;
+              const changePercent = ((close - price) / price) * 100;
+
+              data.push({
+                date: currentDate.toISOString().split('T')[0],
+                open: open.toFixed(2),
+                close: close.toFixed(2),
+                high: high.toFixed(2),
+                low: low.toFixed(2),
+                change: change.toFixed(2),
+                changePercent: changePercent.toFixed(2),
+                volume: (Math.random() * 200000 + 50000).toFixed(2) + '万手',
+                amount: (Math.random() * 100 + 20).toFixed(2) + '亿',
+                ma5: (close + Math.random() * 0.5).toFixed(2),
+                ma10: (close + Math.random() * 0.8).toFixed(2),
+                ma20: (close + Math.random() * 1.2).toFixed(2),
+                ma60: (close + Math.random() * 2.0).toFixed(2),
+                rsi6: (Math.random() * 100).toFixed(2),
+                rsi12: (Math.random() * 100).toFixed(2),
+                rsi24: (Math.random() * 100).toFixed(2),
+                diff: (Math.random() * 2 - 1).toFixed(4),
+                dea: (Math.random() * 2 - 1).toFixed(4),
+                macd: (Math.random() * 0.5 - 0.25).toFixed(4),
+                bollUpper: (close + Math.random() * 0.5).toFixed(2),
+                bollMiddle: close.toFixed(2),
+                bollLower: (close - Math.random() * 0.5).toFixed(2),
+                k: (Math.random() * 100).toFixed(2),
+                d: (Math.random() * 100).toFixed(2),
+                j: (Math.random() * 100).toFixed(2),
+              });
+
+              price = close;
+            }
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+
+          return data.reverse();
+        };
+
+        const [historicalData] = useState(generateHistoricalData());
+
+        const totalPages = Math.ceil(historicalData.length / itemsPerPage);
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const currentData = historicalData.slice(startIndex, endIndex);
+
+        const toggleColumn = (columnKey) => {
+          if (allColumns.find((col) => col.key === columnKey)?.fixed) return;
+          if (selectedColumns.includes(columnKey)) {
+            setSelectedColumns(selectedColumns.filter((key) => key !== columnKey));
+          } else {
+            setSelectedColumns([...selectedColumns, columnKey]);
+          }
+        };
+
+        const selectAllColumns = () => setSelectedColumns(allColumns.map((col) => col.key));
+        const deselectAllColumns = () => setSelectedColumns(['date']);
+
+        const handleJumpToPage = () => {
+          const pageNum = parseInt(jumpToPage, 10);
+          if (pageNum >= 1 && pageNum <= totalPages) {
+            setCurrentPage(pageNum);
+            setJumpToPage('');
+          }
+        };
+
+        const displayColumns = allColumns.filter((col) => selectedColumns.includes(col.key));
+
+        return (
+          <>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">历史明细指标</h3>
+                  <p className="text-sm text-gray-500 mt-1">数据周期: 2018.01.01 - 2026.03.30</p>
+                </div>
+                <button
+                  onClick={() => setShowColumnControl(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                >
+                  <Settings className="w-4 h-4" />
+                  指标列控制
+                </button>
+              </div>
+
+              <div className="overflow-auto max-h-[600px] border border-gray-200 rounded-lg">
+                <table className="min-w-full border-collapse">
+                  <thead className="sticky top-0 bg-gray-50 z-10">
+                    <tr className="border-b border-gray-200">
+                      {displayColumns.map((col) => (
+                        <th
+                          key={col.key}
+                          className="py-3 px-4 text-sm font-medium text-gray-600 whitespace-nowrap text-left"
+                          style={{ minWidth: col.key === 'date' ? '120px' : '80px' }}
+                        >
+                          {col.label}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentData.map((row, rowIndex) => (
+                      <tr key={rowIndex} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                        {displayColumns.map((col) => {
+                          const value = row[col.key];
+                          const isChange = col.key === 'change' || col.key === 'changePercent';
+                          const isPositive = isChange && typeof value === 'string' && !value.startsWith('-');
+
+                          return (
+                            <td
+                              key={col.key}
+                              className={`py-3 px-4 text-sm whitespace-nowrap ${
+                                col.key === 'date'
+                                  ? 'text-gray-900 font-medium'
+                                  : isChange
+                                  ? isPositive
+                                    ? 'text-red-600'
+                                    : 'text-green-600'
+                                  : 'text-gray-700'
+                              }`}
+                            >
+                              {value}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
+                <div className="text-sm text-gray-600">
+                  共 {totalPages} 页，每页 {itemsPerPage} 条，共 {historicalData.length} 条记录
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+                  >
+                    上一页
+                  </button>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setCurrentPage(1)}
+                      className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                        currentPage === 1
+                          ? 'bg-red-600 text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      1
+                    </button>
+
+                    {currentPage > 3 && <span className="text-gray-400">...</span>}
+
+                    {currentPage > 2 && currentPage < totalPages && (
+                      <button onClick={() => setCurrentPage(currentPage)} className="px-3 py-1.5 rounded-lg bg-red-600 text-white text-sm">
+                        {currentPage}
+                      </button>
+                    )}
+
+                    {currentPage < totalPages - 1 && <span className="text-gray-400">...</span>}
+
+                    {totalPages > 1 && (
+                      <button
+                        onClick={() => setCurrentPage(totalPages)}
+                        className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
+                          currentPage === totalPages
+                            ? 'bg-red-600 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        {totalPages}
+                      </button>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+                  >
+                    下一页
+                  </button>
+
+                  <div className="flex items-center gap-2 ml-2">
+                    <span className="text-sm text-gray-600">至</span>
+                    <input
+                      type="number"
+                      value={jumpToPage}
+                      onChange={(e) => setJumpToPage(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleJumpToPage()}
+                      placeholder="页码"
+                      className="w-16 px-2 py-1.5 border border-gray-200 rounded text-sm text-center"
+                      min={1}
+                      max={totalPages}
+                    />
+                    <button onClick={handleJumpToPage} className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm">
+                      跳转
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {showColumnControl && (
+              <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[80vh] overflow-hidden">
+                  <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900">指标列控制</h3>
+                      <p className="text-sm text-gray-500 mt-1">选择需要在表格中显示的指标列</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <button onClick={deselectAllColumns} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">全部取消</button>
+                      <button onClick={selectAllColumns} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors">全部选择</button>
+                    </div>
+                  </div>
+
+                  <div className="p-6 overflow-y-auto max-h-[60vh]">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                      {allColumns.map((col) => {
+                        const isSelected = selectedColumns.includes(col.key);
+                        const isFixed = col.fixed;
+                        return (
+                          <button
+                            key={col.key}
+                            onClick={() => toggleColumn(col.key)}
+                            disabled={isFixed}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                              isFixed
+                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                : isSelected
+                                ? 'bg-red-600 text-white'
+                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                            }`}
+                          >
+                            {col.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-6 border-t border-gray-200">
+                    <div className="text-sm text-gray-600">
+                      已选择 <span className="font-medium text-gray-900">{selectedColumns.length}</span> 个指标
+                    </div>
+                    <button onClick={() => setShowColumnControl(false)} className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                      确定
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </>
+        );
+      }
+
+      function App() {
+        const [sidebarOpen, setSidebarOpen] = useState(false);
+        const [showKLine, setShowKLine] = useState(true);
+        const [period, setPeriod] = useState('日');
+
+        return (
+          <div className="min-h-screen bg-red-50/30">
+            <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
+            <div className="lg:pl-64">
+              <Header onMenuClick={() => setSidebarOpen(true)} />
+
+              <main className="p-4 lg:p-6 max-w-[1600px] mx-auto">
+                <StockOverview />
+
+                <div className="mt-6">
+                  <CoreMetrics
+                    showKLine={showKLine}
+                    setShowKLine={setShowKLine}
+                    period={period}
+                    setPeriod={setPeriod}
+                  />
+                </div>
+
+                <div className="mt-6">
+                  <StockChart showKLine={showKLine} period={period} />
+                </div>
+
+                <div className="mt-6">
+                  <HistoricalData period={period} />
+                </div>
+              </main>
+            </div>
+          </div>
+        );
+      }
+
+      createRoot(document.getElementById('root')).render(<App />);
+    </script>
+  </body>
+</html>
